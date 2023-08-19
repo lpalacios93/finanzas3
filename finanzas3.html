@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #contenedorInput {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #contenedorPromedios {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conteiner{
+            display: table-caption;
+        }
+
+       
+
+    </style>
+</head>
+
+<body style="width: 200px;">
+
+    <div class="conteiner">
+        <label for="">Inversión Inicial</label>
+        <input type="number" id="capital">
+        <label for="cantidad">Años del Proyecto:</label>
+        <input type="number" id="cantidad" min="1">
+        <button onclick="crearInputs();crearh2();crearInputsPromedios()">Iniciar</button>
+        <div id="contenedorInput"></div>
+        <div id="contenedorPromedios"></div>
+        <div id="contenedorResultados"></div>
+    </div>
+
+
+    <script>
+        var capital = document.getElementById("capital")
+        var flujos = []
+
+
+        function crearInputs() {
+            let cantidadInputs = parseInt(document.getElementById("cantidad").value)
+            let contenedorInput = document.getElementById("contenedorInput")
+            contenedorInput.innerHTML = ""
+
+            for (let i = 0; i < cantidadInputs; i++) {
+                let label = document.createElement("label")
+                label.innerText = "Valor del Flujo_" + (i + 1)
+                let input = document.createElement("input")
+                input.type = "number"
+                input.id = "input_" + i
+                contenedorInput.appendChild(label)
+                contenedorInput.appendChild(input)
+            }
+        }
+
+        function crearh2() {
+            let h2 = document.createElement("h2");
+            let boton = document.createElement("button");
+            h2.innerText = "Valores Promedios";
+            //contenedorPromedios.innerHTML = "";
+            contenedorPromedios.appendChild(h2);
+            boton.innerText = "Calcular Tiempo de Recuperación";
+            boton.onclick = function () {
+                empuje();
+                tiempoRecuperacion(parseFloat(capital.value), flujos, contenedorInput);
+                crearBotonResultados();
+            };
+            contenedorInput.appendChild(boton);
+
+        }
+
+        function crearInputsPromedios() {
+            let cantidadInputs = parseInt(document.getElementById("cantidad").value)
+            let contenedorPromedios = document.getElementById("contenedorPromedios")
+
+            for (let j = 0; j < cantidadInputs; j++) {
+
+                //Utilidades Promedios
+                let labelPromedioUtilidad = document.createElement("label")
+                labelPromedioUtilidad.innerText = "Valor de la utilidad flujo " + (j + 1)
+                let inputPromedioUtilidad = document.createElement("input")
+                inputPromedioUtilidad.type = "number"
+                inputPromedioUtilidad.id = "Input_Promedio_Utilidad" + j
+                contenedorPromedios.appendChild(labelPromedioUtilidad)
+                contenedorPromedios.appendChild(inputPromedioUtilidad)
+
+                //Gastos y Costos Promedios
+                let labelPromedioGastos = document.createElement("label")
+                labelPromedioGastos.innerText = "Valor de los Gastos y Costos del flujo " + (j + 1)
+                let inputPromedioGastos = document.createElement("input")
+                inputPromedioGastos.type = "number"
+                inputPromedioGastos.id = "Input_Promedio_Gastos" + j
+                contenedorPromedios.appendChild(labelPromedioGastos)
+                contenedorPromedios.appendChild(inputPromedioGastos)
+            }
+
+        }
+
+        function empuje() {
+            var cantidadInputs = parseInt(document.getElementById("cantidad").value)
+
+            for (var k = 0; k < cantidadInputs; k++) {
+                let inputId = "input_" + k
+                let inputElement = document.getElementById(inputId)
+                let valor = parseInt(inputElement.value)
+
+                flujos.push(parseInt(inputElement.value));
+
+            }
+        }
+
+        function tiempoRecuperacion(inversion, fondos, contenedorInput) {
+            var tiempo = parseInt("")
+            var acumulado = -parseFloat(inversion);
+
+
+            for (var i = 0; i < fondos.length; i++) {
+                acumulado += fondos[i]
+
+                if (acumulado >= 0) {
+                    tiempo = i
+                    break
+                }
+            }
+            let mensajeTiempo = document.createElement("p")
+            mensajeTiempo.innerText = "El tiempo de recuperación es de " + tiempo + " Años  y " + (((parseFloat(fondos[i]) - acumulado) / parseFloat(fondos[i])) * 12).toFixed(2) + " meses";
+            contenedorInput.appendChild(mensajeTiempo)
+        }
+
+        function promedios(suma1, anualidad) {
+
+            let promedio = (parseFloat(suma1) / parseInt(anualidad))
+            return promedio
+        }
+
+        var beneficios = 0
+
+        function calcularUtilidades() {
+
+            var promedioUtilidad = parseFloat(0)
+            let cantidadAño = document.getElementById("cantidad")
+            for (let i = 0; i < cantidadAño.value; i++) {
+                let promedioUtilidadId = "Input_Promedio_Utilidad" + i
+                let promedioUtilidadElement = parseFloat(document.getElementById(promedioUtilidadId).value)
+
+                promedioUtilidad = parseFloat(promedioUtilidad + promedioUtilidadElement)
+            }
+
+            let mensajeUtilidad = document.createElement("p")
+            mensajeUtilidad.innerText = "La Utilidad Promedio es de: " + promedios(parseFloat(promedioUtilidad), parseInt(cantidadAño.value))
+
+            contenedorResultados.appendChild(mensajeUtilidad)
+
+            beneficios = promedioUtilidad
+            return promedioUtilidad
+
+        }
+
+        var egresos = 0
+
+        function calcularGastos() {
+            var promedioGastos = parseFloat(0)
+            let cantidadAño = document.getElementById("cantidad")
+            for (let i = 0; i < cantidadAño.value; i++) {
+                let promedioGastosId = "Input_Promedio_Gastos" + i
+                let promedioGastosElement = parseFloat(document.getElementById(promedioGastosId).value)
+
+                promedioGastos = parseFloat(promedioGastos + promedioGastosElement)
+            }
+
+            let mensajeGastos = document.createElement("p")
+            mensajeGastos.innerText = "Los Gastos y Costos Promedios son de: " + promedios(parseFloat(promedioGastos), parseInt(cantidadAño.value))
+
+            contenedorResultados.appendChild(mensajeGastos)
+            egresos = promedioGastos
+            return promedioGastos
+
+
+        }
+
+        function rentabilidadContable(costos, utilidades) {
+            let mensajeRentabilidad = document.createElement("p")
+            mensajeRentabilidad.innerText = "La Rentabilidad Contable es de: " + ((utilidades / costos) * 100).toFixed(2) + "%"
+
+            contenedorResultados.appendChild(mensajeRentabilidad)
+        }
+
+
+
+        function crearBotonResultados() {
+            let botonResultados = document.createElement("button")
+            botonResultados.innerText = "Resultados"
+            botonResultados.onclick = function () {
+                calcularUtilidades()
+                calcularGastos()
+                rentabilidadContable(egresos, beneficios)
+                let valorActual = calcularValorActual(parseFloat(capital.value), flujos, parseFloat((beneficios / egresos).toFixed(4)))
+                mostrarResultadoValorActual(valorActual)
+            };
+            let contenedorResultados = document.getElementById("contenedorResultados")
+            contenedorResultados.innerHTML = ""
+
+            contenedorResultados.appendChild(botonResultados)
+        }
+
+        function calcularValorActual(capital, flujos, tasaDescuento) {
+            let valorActual = -capital; // Inversion Inicial (negativa)
+
+            for (let i = 0; i < flujos.length; i++) {
+                let flujo = flujos[i];
+                valorActual += flujo / Math.pow(1 + tasaDescuento, i + 1);
+            }
+
+            return valorActual
+        }
+
+        function mostrarResultadoValorActual(valorActual) {
+            let mensajeValorActual = document.createElement("p");
+            mensajeValorActual.innerText = "El Valor Actual del Proyecto es: " + valorActual.toFixed(2);
+            let contenedorValorActual = document.getElementById("contenedorResultados");
+            contenedorValorActual.appendChild(mensajeValorActual);
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>
